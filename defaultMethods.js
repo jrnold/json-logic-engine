@@ -887,9 +887,10 @@ function createComparator (name, func) {
       if (!Array.isArray(data)) return false
       if (data.length < 2) return false
       if (data.length === 2) return buildState.compile`((prev = ${data[0]}) ${opStr} compareCheck(${data[1]}, prev, ${strict}))`
-      let res = buildState.compile`((prev = ${data[0]}) ${opStr} (prev = compareCheck(${data[1]}, prev, ${strict})))`
-      for (let i = 2; i < data.length; i++) res = buildState.compile`(${res} && prev ${opStr} (prev = compareCheck(${data[i]}, prev, ${strict})))`
-      return res
+      // Chains run the interpreted method: each step compares the original operands, but
+      // compareCheck may rewrite null and 0 for the native operator, and the template
+      // would carry the rewritten value into the next step.
+      return false
     },
     [OriginalImpl]: true,
     [Sync]: (data, buildState) => isSyncDeep(data, buildState.engine, buildState),
