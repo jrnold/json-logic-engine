@@ -1,0 +1,58 @@
+[
+  "# { op: [x] } passes x as the single argument, even when x evaluates to an array",
+  {
+    "description": "cat of a single var holding an array",
+    "rule": {
+      "cat": [
+        {
+          "var": "t"
+        }
+      ]
+    },
+    "data": {
+      "t": [
+        "a",
+        "b"
+      ]
+    },
+    "result": "a,b"
+  },
+  {
+    "description": "+ of a single var holding an array",
+    "rule": {
+      "+": [
+        {
+          "var": "t"
+        }
+      ]
+    },
+    "data": {
+      "t": [
+        1,
+        2
+      ]
+    },
+    "error": {
+      "type": "NaN"
+    }
+  },
+  {
+    "description": "- of a single var holding an array",
+    "rule": {
+      "-": [
+        {
+          "var": "t"
+        }
+      ]
+    },
+    "data": {
+      "t": [
+        5,
+        2
+      ]
+    },
+    "error": {
+      "type": "NaN"
+    }
+  }
+]
