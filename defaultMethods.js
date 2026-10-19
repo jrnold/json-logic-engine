@@ -737,7 +737,13 @@ const defaultMethods = {
       if (typeof data === 'number') return '"' + JSON.stringify(data) + '"'
       if (!Array.isArray(data)) return false
       let res = buildState.compile`''`
-      for (let i = 0; i < data.length; i++) res = buildState.compile`${res} + ${data[i]}`
+      for (let i = 0; i < data.length; i++) {
+        // the interpreted method skips null and undefined rather than writing "null"
+        if (data[i] === null || data[i] === undefined) continue
+        if (data[i] && typeof data[i] !== 'object') res = buildState.compile`${res} + ${data[i]}`
+        else if (chainingSupported()) res = buildState.compile`${res} + (${data[i]} ?? '')`
+        else res = buildState.compile`${res} + ((a) => a === null || a === undefined ? '' : a)(${data[i]})`
+      }
       return buildState.compile`(${res})`
     }
   },
