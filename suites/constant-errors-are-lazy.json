@@ -54,5 +54,23 @@
     "rule": { "if": [{ "var": "x" }, { "/": [{ "var": "y" }, 0] }, 0] },
     "data": { "x": 1 },
     "error": { "type": "NaN" }
+  },
+  {
+    "description": "Constant if with a throwing comparison in the untaken branch",
+    "rule": { "if": ["abc", "", { "==": ["a", 2] }] },
+    "data": {},
+    "result": ""
+  },
+  {
+    "description": "if with a constant comparison that throws in the untaken branch",
+    "rule": { "if": [{ "var": "b" }, { "var": "v" }, { ">": [-1, "CA"] }] },
+    "data": { "b": true, "v": 1 },
+    "result": 1
+  },
+  {
+    "description": "if with a constant comparison that throws in the taken branch",
+    "rule": { "if": [{ "var": "b" }, { "var": "v" }, { ">": [-1, "CA"] }] },
+    "data": {},
+    "error": { "type": "NaN" }
   }
 ]

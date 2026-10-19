@@ -210,7 +210,15 @@ export function optimize (logic, engine, above = []) {
   };
 
   if (logic && typeof logic === 'object') {
-    const idiomEnhancement = checkIdioms(logic, engine, above)
+    let idiomEnhancement
+    try {
+      idiomEnhancement = checkIdioms(logic, engine, above)
+    } catch (err) {
+      // Idioms evaluate constant operands while optimizing; leave their errors for
+      // evaluation time, like folded constants. Unknown operators still fail now.
+      if (err && err.type === 'Unknown Operator') throw err
+      return () => { throw err }
+    }
     if (typeof idiomEnhancement !== 'undefined') return idiomEnhancement
 
     const keys = Object.keys(logic)
