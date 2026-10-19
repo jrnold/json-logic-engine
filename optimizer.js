@@ -24,7 +24,9 @@ function getMethod (logic, engine, methodName, above) {
 
   let args = logic[methodName]
   if ((!args || typeof args !== 'object') && !method.optimizeUnary) args = [args]
-  if (Array.isArray(args) && args.length === 1 && method.optimizeUnary && !Array.isArray(args[0])) args = args[0]
+  // Unwrap `{ op: [x] }` to `{ op: x }` only for literals: once evaluated, an array
+  // value would be mistaken for the argument list.
+  if (Array.isArray(args) && args.length === 1 && method.optimizeUnary && (!args[0] || typeof args[0] !== 'object')) args = args[0]
 
   if (Array.isArray(args)) {
     const optimizedArgs = args.map(l => optimize(l, engine, above))
