@@ -1,0 +1,39 @@
+[
+  "# Compiled and/or must behave the same wherever they are nested",
+  {
+    "description": "in with an and as the haystack, stopping on a falsy value",
+    "rule": { "in": ["a", { "and": [{ "var": "x" }] }] },
+    "data": { "x": 0 },
+    "result": false
+  },
+  {
+    "description": "in with an or as the haystack",
+    "rule": { "in": ["a", { "or": [{ "var": "x" }, "cat"] }] },
+    "data": { "x": null },
+    "result": true
+  },
+  {
+    "description": "cat with an or argument between strings",
+    "rule": { "cat": ["pre-", { "or": [{ "var": "x" }, "y"] }, "-post"] },
+    "data": { "x": "X" },
+    "result": "pre-X-post"
+  },
+  {
+    "description": "cat with an and as the first argument",
+    "rule": { "cat": [{ "and": [{ "var": "x" }, { "var": "z" }] }, "-post"] },
+    "data": { "x": 1, "z": 2 },
+    "result": "2-post"
+  },
+  {
+    "description": "var with an or default, when the var is present",
+    "rule": { "var": ["x", { "or": [{ "var": "y" }, "d"] }] },
+    "data": { "x": 5 },
+    "result": 5
+  },
+  {
+    "description": "var with an or default, when the var is missing",
+    "rule": { "var": ["x", { "or": [{ "var": "y" }, "d"] }] },
+    "data": {},
+    "result": "d"
+  }
+]
