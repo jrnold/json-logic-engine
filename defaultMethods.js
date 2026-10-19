@@ -851,7 +851,7 @@ function createComparator (name, func) {
           continue
         }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
-        if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
+        if (Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
         prev = current
       }
@@ -877,7 +877,7 @@ function createComparator (name, func) {
           continue
         }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
-        if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
+        if (Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
         prev = current
       }

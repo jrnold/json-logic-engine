@@ -23,5 +23,11 @@
     "rule": { "===": ["a", { "var": "c" }, "a"] },
     "data": { "c": "a" },
     "result": true
+  },
+  {
+    "description": "Chained <= where a string compared as a string meets a number",
+    "rule": { "<=": ["null", { "var": "k" }, 1] },
+    "data": { "k": "u2" },
+    "error": { "type": "NaN" }
   }
 ]
