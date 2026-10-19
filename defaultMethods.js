@@ -722,6 +722,8 @@ const defaultMethods = {
     [Sync]: true,
     method: (arr) => {
       if (typeof arr === 'string') return arr
+      // a unary null (`{ "cat": [null] }` unwrapped by the optimizer) is skipped, as in a list
+      if (arr === null || arr === undefined) return ''
       if (!Array.isArray(arr)) return arr.toString()
       let res = ''
       for (let i = 0; i < arr.length; i++) {

@@ -23,5 +23,17 @@
     "rule": { "cat": [{ "if": [{ "var": "b" }, "x", null] }, "!"] },
     "data": {},
     "result": "!"
+  },
+  {
+    "description": "cat of a single null literal",
+    "rule": { "cat": [null] },
+    "data": {},
+    "result": ""
+  },
+  {
+    "description": "cat of null",
+    "rule": { "cat": null },
+    "data": {},
+    "result": ""
   }
 ]
