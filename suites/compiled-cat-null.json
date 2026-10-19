@@ -1,0 +1,39 @@
+[
+  "# Compiled cat skips null and undefined, like the interpreter",
+  {
+    "description": "cat with a missing var",
+    "rule": { "cat": [{ "var": "s" }, { "var": "n" }] },
+    "data": { "s": "a" },
+    "result": "a"
+  },
+  {
+    "description": "cat with a null literal next to a var",
+    "rule": { "cat": ["a", null, { "var": "n" }] },
+    "data": {},
+    "result": "a"
+  },
+  {
+    "description": "cat keeps falsy values that are not null",
+    "rule": { "cat": [{ "var": "n" }, 0, false, ""] },
+    "data": {},
+    "result": "0false"
+  },
+  {
+    "description": "cat with an if that returns null",
+    "rule": { "cat": [{ "if": [{ "var": "b" }, "x", null] }, "!"] },
+    "data": {},
+    "result": "!"
+  },
+  {
+    "description": "cat of a single null literal",
+    "rule": { "cat": [null] },
+    "data": {},
+    "result": ""
+  },
+  {
+    "description": "cat of null",
+    "rule": { "cat": null },
+    "data": {},
+    "result": ""
+  }
+]
