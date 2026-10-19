@@ -1017,10 +1017,13 @@ defaultMethods.if.compile = function (data, buildState) {
  * Transforms the operands of the arithmetic operation to numbers.
  */
 function numberCoercion (i, buildState) {
-  if (Array.isArray(i)) return precoerceNumber(NaN)
+  // Operands that can't be numbers throw when evaluated, not while building: the
+  // expression may sit in a branch that never runs.
+  const NOT_A_NUMBER = 'precoerceNumber(NaN)'
+  if (Array.isArray(i)) return NOT_A_NUMBER
 
   if (typeof i === 'number' || typeof i === 'boolean') return '+' + buildString(i, buildState)
-  if (typeof i === 'string') return '+' + precoerceNumber(+i)
+  if (typeof i === 'string') return Number.isNaN(+i) ? NOT_A_NUMBER : '+' + (+i)
 
   // check if it's already a number once built
   const f = buildString(i, buildState)
@@ -1029,11 +1032,11 @@ function numberCoercion (i, buildState) {
   if (/^-?\d+(\.\d*)?$/.test(f)) return '+' + f
 
   // if it starts with " it's a string
-  if (f.startsWith('"')) return '+' + precoerceNumber(+JSON.parse(f))
+  if (f.startsWith('"')) return Number.isNaN(+JSON.parse(f)) ? NOT_A_NUMBER : '+' + (+JSON.parse(f))
   if (f === 'true') return '1'
   if (f === 'false') return '0'
   if (f === 'null') return '0'
-  if (f.startsWith('[') || f.startsWith('{')) return precoerceNumber(NaN)
+  if (f.startsWith('[') || f.startsWith('{')) return NOT_A_NUMBER
 
   return `(+precoerceNumber(${f}))`
 }
@@ -1079,7 +1082,7 @@ defaultMethods['/'].compile = function (data, buildState) {
     if (data.length === 1) data = [1, data[0]]
     return `precoerceNumber(${data.map((i, x) => {
       let res = numberCoercion(i, buildState)
-      if (x && res === '+0') precoerceNumber(NaN)
+      // a zero divisor becomes `precoerceNumber(+0 || NaN)`, which throws when evaluated
       if (x) res = `precoerceNumber(${res} || NaN)`
       return res
     }).join(' / ')})`

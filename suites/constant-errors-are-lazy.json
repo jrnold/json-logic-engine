@@ -1,0 +1,76 @@
+[
+  "# Constant sub-rules are folded ahead of time, but their errors must only",
+  "# surface if they are evaluated, as in the plain interpreter",
+  {
+    "description": "if does not evaluate a constant division by zero in an untaken branch",
+    "rule": { "if": [{ "var": "x" }, 1, { "/": [1, 0] }] },
+    "data": { "x": true },
+    "result": 1
+  },
+  {
+    "description": "if evaluates a constant division by zero in the taken branch",
+    "rule": { "if": [{ "var": "x" }, 1, { "/": [1, 0] }] },
+    "data": { "x": false },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "and stops before a constant comparison that throws",
+    "rule": { "and": [{ "var": "x" }, { "<": ["a", 1] }] },
+    "data": { "x": 0 },
+    "result": 0
+  },
+  {
+    "description": "and reaches a constant comparison that throws",
+    "rule": { "and": [{ "var": "x" }, { "<": ["a", 1] }] },
+    "data": { "x": 1 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Addition with a non-numeric string constant in an untaken branch",
+    "rule": { "if": [{ "var": "x" }, { "+": [{ "var": "y" }, "abc"] }, 0] },
+    "data": {},
+    "result": 0
+  },
+  {
+    "description": "Addition with a non-numeric string constant in the taken branch",
+    "rule": { "if": [{ "var": "x" }, { "+": [{ "var": "y" }, "abc"] }, 0] },
+    "data": { "x": 1 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Addition with an array constant in an untaken branch",
+    "rule": { "if": [{ "var": "x" }, { "+": [{ "var": "y" }, [1]] }, 0] },
+    "data": {},
+    "result": 0
+  },
+  {
+    "description": "Division by a zero constant in an untaken branch",
+    "rule": { "if": [{ "var": "x" }, { "/": [{ "var": "y" }, 0] }, 0] },
+    "data": {},
+    "result": 0
+  },
+  {
+    "description": "Division by a zero constant in the taken branch",
+    "rule": { "if": [{ "var": "x" }, { "/": [{ "var": "y" }, 0] }, 0] },
+    "data": { "x": 1 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Constant if with a throwing comparison in the untaken branch",
+    "rule": { "if": ["abc", "", { "==": ["a", 2] }] },
+    "data": {},
+    "result": ""
+  },
+  {
+    "description": "if with a constant comparison that throws in the untaken branch",
+    "rule": { "if": [{ "var": "b" }, { "var": "v" }, { ">": [-1, "CA"] }] },
+    "data": { "b": true, "v": 1 },
+    "result": 1
+  },
+  {
+    "description": "if with a constant comparison that throws in the taken branch",
+    "rule": { "if": [{ "var": "b" }, { "var": "v" }, { ">": [-1, "CA"] }] },
+    "data": {},
+    "error": { "type": "NaN" }
+  }
+]

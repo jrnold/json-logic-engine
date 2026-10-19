@@ -188,10 +188,18 @@ function buildString (method, buildState = {}) {
       engine.methods[func] &&
       isDeterministic(method, engine, buildState)
     ) {
+      // Inline the constant, but leave errors for evaluation time: the branch may never run.
+      const throwLater = (err) => `(() => { throw ${Number.isNaN(err) ? 'NaN' : pushValue(err, true)} })()`
       if (isDeepSync(method, engine)) {
-        return pushValue((engine.fallback || engine).run(method), true)
+        let value
+        try {
+          value = (engine.fallback || engine).run(method)
+        } catch (err) {
+          return throwLater(err)
+        }
+        return pushValue(value, true)
       } else if (!buildState.avoidInlineAsync) {
-        processing.push(engine.run(method).then((i) => pushValue(i)))
+        processing.push(engine.run(method).then((i) => pushValue(i), throwLater))
         return `__%%%${processing.length - 1}%%%__`
       } else {
         buildState.asyncDetected = true
