@@ -54,11 +54,15 @@ export function assertAllowedDepth (item, depthAllowed = 0) {
 
 /**
  * Used to assert in compiled templates that when a numeric comparison is made, both values are numbers.
- * @param {*} item
+ *
+ * `prev` comes first so that compiled templates read it before evaluating `item`:
+ * evaluating `item` can reassign `prev` (e.g. a compiled `var`), and arguments are
+ * evaluated left to right.
  * @param {*} prev
+ * @param {*} item
  * @returns {number}
  */
-export function compareCheck (item, prev, strict) {
+export function compareCheck (prev, item, strict) {
   if (strict || ((typeof item === 'string' || item === null) && (typeof prev === 'string' || prev === null))) return item
   if (Number.isNaN(+precoerceNumber(item)) && prev !== null) throw NaN
   if (Number.isNaN(+precoerceNumber(prev))) throw NaN

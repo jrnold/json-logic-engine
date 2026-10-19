@@ -1,0 +1,58 @@
+[
+  "# Compiled comparisons must check the right operand against the left one,",
+  "# even when evaluating the right operand reassigns the compiler's `prev`",
+  {
+    "description": "== with an array var on the left and a number var on the right",
+    "rule": { "==": [{ "var": "x" }, { "var": "y" }] },
+    "data": { "x": [1], "y": 1 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "< with a non-numeric string var against a number var",
+    "rule": { "<": [{ "var": "x" }, { "var": "y" }] },
+    "data": { "x": "abc", "y": 1 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "!= with a non-numeric string var against a number var",
+    "rule": { "!=": [{ "var": "x" }, { "var": "y" }] },
+    "data": { "x": "abc", "y": 2 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "null == false, both from vars",
+    "rule": { "==": [{ "var": "x" }, { "var": "y" }] },
+    "data": { "x": null, "y": false },
+    "result": true
+  },
+  {
+    "description": "0 == a missing var",
+    "rule": { "==": [0, { "var": "x" }] },
+    "data": {},
+    "result": true
+  },
+  {
+    "description": "false == a missing var",
+    "rule": { "==": [false, { "var": "x" }] },
+    "data": {},
+    "result": true
+  },
+  {
+    "description": "Chained < with a non-numeric string var in the middle",
+    "rule": { "<": [{ "var": "a" }, { "var": "b" }, { "var": "c" }] },
+    "data": { "a": 1, "b": "x", "c": 3 },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Chained < over vars",
+    "rule": { "<": [{ "var": "a" }, { "var": "b" }, { "var": "c" }] },
+    "data": { "a": 1, "b": 2, "c": 3 },
+    "result": true
+  },
+  {
+    "description": "== with an and on the right (and also assigns prev)",
+    "rule": { "==": [{ "var": "x" }, { "and": [{ "var": "y" }] }] },
+    "data": { "x": [1], "y": 1 },
+    "error": { "type": "NaN" }
+  }
+]

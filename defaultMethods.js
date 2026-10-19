@@ -876,9 +876,9 @@ function createComparator (name, func) {
     compile: (data, buildState) => {
       if (!Array.isArray(data)) return false
       if (data.length < 2) return false
-      if (data.length === 2) return buildState.compile`((prev = ${data[0]}) ${opStr} compareCheck(${data[1]}, prev, ${strict}))`
-      let res = buildState.compile`((prev = ${data[0]}) ${opStr} (prev = compareCheck(${data[1]}, prev, ${strict})))`
-      for (let i = 2; i < data.length; i++) res = buildState.compile`(${res} && prev ${opStr} (prev = compareCheck(${data[i]}, prev, ${strict})))`
+      if (data.length === 2) return buildState.compile`((prev = ${data[0]}) ${opStr} compareCheck(prev, ${data[1]}, ${strict}))`
+      let res = buildState.compile`((prev = ${data[0]}) ${opStr} (prev = compareCheck(prev, ${data[1]}, ${strict})))`
+      for (let i = 2; i < data.length; i++) res = buildState.compile`(${res} && prev ${opStr} (prev = compareCheck(prev, ${data[i]}, ${strict})))`
       return res
     },
     [OriginalImpl]: true,
