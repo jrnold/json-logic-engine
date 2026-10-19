@@ -230,7 +230,14 @@ export function optimize (logic, engine, above = []) {
 
     if (methodName in engine.methods) {
       const result = getMethod(logic, engine, methodName, above)
-      if (deterministic) return result()
+      if (deterministic) {
+        // Fold the constant, but leave errors for evaluation time: the branch may never run.
+        try {
+          return result()
+        } catch (err) {
+          return () => { throw err }
+        }
+      }
       return result
     }
 
