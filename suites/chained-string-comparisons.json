@@ -1,0 +1,45 @@
+[
+  "# Chained comparisons of strings (and strict chains) compare each pair as is",
+  {
+    "description": "Chained < over strings",
+    "rule": { "<": ["a", { "var": "c" }, "z"] },
+    "data": { "c": "m" },
+    "result": true
+  },
+  {
+    "description": "Chained < over strings, failing",
+    "rule": { "<": ["a", { "var": "c" }, "b"] },
+    "data": { "c": "z" },
+    "result": false
+  },
+  {
+    "description": "Chained == over equal strings",
+    "rule": { "==": ["a", { "var": "c" }, "a"] },
+    "data": { "c": "a" },
+    "result": true
+  },
+  {
+    "description": "Chained === over equal strings",
+    "rule": { "===": ["a", { "var": "c" }, "a"] },
+    "data": { "c": "a" },
+    "result": true
+  },
+  {
+    "description": "Chained <= where a string compared as a string meets a number",
+    "rule": { "<=": ["null", { "var": "k" }, 1] },
+    "data": { "k": "u2" },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Chained <= carries the original operand, not compareCheck's rewrite",
+    "rule": { "<=": [{ "var": "a" }, { "var": "b" }, { "var": "c" }] },
+    "data": { "b": 0, "c": "abc" },
+    "error": { "type": "NaN" }
+  },
+  {
+    "description": "Chained <= with a null start",
+    "rule": { "<=": [{ "var": "a" }, 0, 1] },
+    "data": {},
+    "result": true
+  }
+]

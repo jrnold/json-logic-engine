@@ -871,9 +871,14 @@ function createComparator (name, func) {
       let prev = runOptimizedOrFallback(args[0], engine, context, above)
       for (let i = 1; i < args.length; i++) {
         const current = runOptimizedOrFallback(args[i], engine, context, above)
-        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) if (!func(prev, current)) return false
+        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) {
+          // compared as is, like the two-argument form; the numeric checks below don't apply
+          if (!func(prev, current)) return false
+          prev = current
+          continue
+        }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
-        if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
+        if (Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
         prev = current
       }
@@ -892,9 +897,14 @@ function createComparator (name, func) {
       let prev = await runOptimizedOrFallback(args[0], engine, context, above)
       for (let i = 1; i < args.length; i++) {
         const current = await runOptimizedOrFallback(args[i], engine, context, above)
-        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) if (!func(prev, current)) return false
+        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) {
+          // compared as is, like the two-argument form; the numeric checks below don't apply
+          if (!func(prev, current)) return false
+          prev = current
+          continue
+        }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
-        if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
+        if (Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
         prev = current
       }
@@ -904,9 +914,10 @@ function createComparator (name, func) {
       if (!Array.isArray(data)) return false
       if (data.length < 2) return false
       if (data.length === 2) return buildState.compile`((prev = ${data[0]}) ${opStr} compareCheck(prev, ${data[1]}, ${strict}))`
-      let res = buildState.compile`((prev = ${data[0]}) ${opStr} (prev = compareCheck(prev, ${data[1]}, ${strict})))`
-      for (let i = 2; i < data.length; i++) res = buildState.compile`(${res} && prev ${opStr} (prev = compareCheck(prev, ${data[i]}, ${strict})))`
-      return res
+      // Chains run the interpreted method: each step compares the original operands, but
+      // compareCheck may rewrite null and 0 for the native operator, and the template
+      // would carry the rewritten value into the next step.
+      return false
     },
     [OriginalImpl]: true,
     [Sync]: (data, buildState) => isSyncDeep(data, buildState.engine, buildState),
