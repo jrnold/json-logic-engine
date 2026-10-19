@@ -58,6 +58,11 @@ function isSyncDeep (method, engine, buildState) {
 /**
  * Runs the logic with the given data.
  */
+/** The operand of a unary operator written as `{ op: x }` or `{ op: [x] }`. */
+function unaryOperand (data) {
+  return Array.isArray(data) ? data[0] : data
+}
+
 function runOptimizedOrFallback (logic, engine, data, above) {
   if (!logic) return logic
   if (typeof logic !== 'object') return logic
@@ -717,8 +722,20 @@ const defaultMethods = {
     },
     lazy: true
   },
-  '!': (value, _1, _2, engine) => Array.isArray(value) ? !engine.truthy(value[0]) : !engine.truthy(value),
-  '!!': (value, _1, _2, engine) => Boolean(Array.isArray(value) ? engine.truthy(value[0]) : engine.truthy(value)),
+  // Lazy, so `{ "!": x }` and `{ "!": [x] }` both test x itself: once evaluated, an
+  // array value would be indistinguishable from the argument list.
+  '!': {
+    method: (data, context, above, engine) => !engine.truthy(runOptimizedOrFallback(unaryOperand(data), engine, context, above)),
+    asyncMethod: async (data, context, above, engine) => !engine.truthy(await runOptimizedOrFallback(unaryOperand(data), engine, context, above)),
+    deterministic: (data, buildState) => isDeterministic(data, buildState.engine, buildState),
+    lazy: true
+  },
+  '!!': {
+    method: (data, context, above, engine) => Boolean(engine.truthy(runOptimizedOrFallback(unaryOperand(data), engine, context, above))),
+    asyncMethod: async (data, context, above, engine) => Boolean(engine.truthy(await runOptimizedOrFallback(unaryOperand(data), engine, context, above))),
+    deterministic: (data, buildState) => isDeterministic(data, buildState.engine, buildState),
+    lazy: true
+  },
   cat: {
     [OriginalImpl]: true,
     [Sync]: true,
