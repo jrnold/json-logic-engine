@@ -1,0 +1,27 @@
+[
+  "# ! and !! test their operand, even when it evaluates to an array",
+  {
+    "description": "! of a var holding a non-empty array whose first element is falsy",
+    "rule": { "!": { "var": "t" } },
+    "data": { "t": ["", "x"] },
+    "result": false
+  },
+  {
+    "description": "! of a var holding an array, argument list form",
+    "rule": { "!": [{ "var": "t" }] },
+    "data": { "t": ["", "x"] },
+    "result": false
+  },
+  {
+    "description": "!! of a var holding [0]",
+    "rule": { "!!": { "var": "t" } },
+    "data": { "t": [0] },
+    "result": true
+  },
+  {
+    "description": "!! of a var holding an empty array",
+    "rule": { "!!": [{ "var": "t" }] },
+    "data": { "t": [] },
+    "result": false
+  }
+]
