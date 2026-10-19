@@ -1,0 +1,27 @@
+[
+  "# Chained comparisons of strings (and strict chains) compare each pair as is",
+  {
+    "description": "Chained < over strings",
+    "rule": { "<": ["a", { "var": "c" }, "z"] },
+    "data": { "c": "m" },
+    "result": true
+  },
+  {
+    "description": "Chained < over strings, failing",
+    "rule": { "<": ["a", { "var": "c" }, "b"] },
+    "data": { "c": "z" },
+    "result": false
+  },
+  {
+    "description": "Chained == over equal strings",
+    "rule": { "==": ["a", { "var": "c" }, "a"] },
+    "data": { "c": "a" },
+    "result": true
+  },
+  {
+    "description": "Chained === over equal strings",
+    "rule": { "===": ["a", { "var": "c" }, "a"] },
+    "data": { "c": "a" },
+    "result": true
+  }
+]

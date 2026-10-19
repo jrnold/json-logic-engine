@@ -844,7 +844,12 @@ function createComparator (name, func) {
       let prev = runOptimizedOrFallback(args[0], engine, context, above)
       for (let i = 1; i < args.length; i++) {
         const current = runOptimizedOrFallback(args[i], engine, context, above)
-        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) if (!func(prev, current)) return false
+        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) {
+          // compared as is, like the two-argument form; the numeric checks below don't apply
+          if (!func(prev, current)) return false
+          prev = current
+          continue
+        }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
         if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
@@ -865,7 +870,12 @@ function createComparator (name, func) {
       let prev = await runOptimizedOrFallback(args[0], engine, context, above)
       for (let i = 1; i < args.length; i++) {
         const current = await runOptimizedOrFallback(args[i], engine, context, above)
-        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) if (!func(prev, current)) return false
+        if (strict || ((typeof current === 'string' || current === null) && (typeof prev === 'string' || prev === null))) {
+          // compared as is, like the two-argument form; the numeric checks below don't apply
+          if (!func(prev, current)) return false
+          prev = current
+          continue
+        }
         if (Number.isNaN(+precoerceNumber(current)) && prev !== null) throw NaN
         if (i === 1 && Number.isNaN(+precoerceNumber(prev))) throw NaN
         if (!func(+prev, +current)) return false
