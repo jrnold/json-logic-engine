@@ -275,7 +275,8 @@ const defaultMethods = {
       if (Array.isArray(data)) {
         if (!data.length) return buildState.compile`null`
         for (let i = 0; i < data.length; i++) res = buildState.compile`${res} engine.truthy(prev = ${data[i]}) ? prev : `
-        res = buildState.compile`${res} prev`
+        // parenthesized: the ternary chain is spliced into other templates (e.g. `'' + a + b`)
+        res = buildState.compile`(${res} prev)`
         return res
       }
       return false
@@ -437,7 +438,8 @@ const defaultMethods = {
       if (Array.isArray(data)) {
         if (!data.length) return buildState.compile`null`
         for (let i = 0; i < data.length; i++) res = buildState.compile`${res} !engine.truthy(prev = ${data[i]}) ? prev : `
-        res = buildState.compile`${res} prev`
+        // parenthesized: the ternary chain is spliced into other templates (e.g. `'' + a + b`)
+        res = buildState.compile`(${res} prev)`
         return res
       }
 
